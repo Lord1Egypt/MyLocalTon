@@ -1,61 +1,78 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.ton</groupId>
     <artifactId>MyLocalTon</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <java.version>11</java.version>
+        <java.version>21</java.version>
 
         <ton_branch>master</ton_branch>
-        <maven.compiler.release>11</maven.compiler.release>
+        <arch></arch> <!-- add when work or compile on/for arm64  -aarch64 -->
+        <maven.compiler.release>21</maven.compiler.release>
+        <ton4j.version>1.3.3</ton4j.version>
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.clean.plugin.version>3.1.0</maven.clean.plugin.version>
         <maven.assembly.plugin.version>3.6.0</maven.assembly.plugin.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <apache.commons.lang3.version>3.9</apache.commons.lang3.version>
-        <openjfx.version>21</openjfx.version>
+        <openjfx.version>23.0.2</openjfx.version>
         <jfoenix.version>9.0.4</jfoenix.version>
-        <commons-io.version>2.7</commons-io.version>
+        <commons-io.version>2.14.0</commons-io.version>
         <commons-codec.version>1.14</commons-codec.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.38</lombok.version>
         <jupiter.version>5.7.1</jupiter.version>
         <junit.version>4.13.2</junit.version>
         <assertj.version>3.19.0</assertj.version>
         <concurrent-junit.version>1.0.2</concurrent-junit.version>
         <gson.version>2.8.6</gson.version>
-        <logback.version>1.4.12</logback.version>
+        <logback.version>1.5.20</logback.version>
         <zip4j.version>2.11.3</zip4j.version>
         <jetty.version>11.0.14</jetty.version>
         <jprocesses.version>1.6.5</jprocesses.version>
         <richtextfx.version>0.10.7</richtextfx.version>
-        <ton4j.version>0.1.4</ton4j.version>
         <objectdb.version>2.8.6</objectdb.version>
         <javax.persistence.version>2.1.0</javax.persistence.version>
         <jta.version>1.1</jta.version>
         <log4j.version>2.17.1</log4j.version>
 
         <linux.amd64.ton.binaries.uri>
-            https://cicd.neodix.io/view/pipelines/job/${ton_branch}-pipeline/lastSuccessfulBuild/artifact/artifacts/ton-x86-64-linux-portable.zip
+            https://github.com/ton-blockchain/ton/releases/latest/download/ton-linux-x86_64.zip
         </linux.amd64.ton.binaries.uri>
         <mac.amd64.ton.binaries.uri>
-            https://cicd.neodix.io/view/pipelines/job/${ton_branch}-pipeline/lastSuccessfulBuild/artifact/artifacts/ton-x86-64-macos-portable.zip
+            https://github.com/ton-blockchain/ton/releases/latest/download/ton-mac-x86-64.zip
         </mac.amd64.ton.binaries.uri>
         <win.amd64.ton.binaries.uri>
-            https://cicd.neodix.io/view/pipelines/job/${ton_branch}-pipeline/lastSuccessfulBuild/artifact/artifacts/ton-x86-64-windows.zip
+            https://github.com/ton-blockchain/ton/releases/latest/download/ton-win-x86-64.zip
         </win.amd64.ton.binaries.uri>
-    </properties>
 
-    <repositories>
-        <repository>
-            <id>objectdb</id>
-            <name>ObjectDB Repository</name>
-            <url>https://m2.objectdb.com</url>
-        </repository>
-    </repositories>
+        <linux.arm64.ton.binaries.uri>
+            https://github.com/ton-blockchain/ton/releases/latest/download/ton-linux-arm64.zip
+        </linux.arm64.ton.binaries.uri>
+        <mac.arm64.ton.binaries.uri>
+            https://github.com/ton-blockchain/ton/releases/latest/download/ton-mac-arm64.zip
+        </mac.arm64.ton.binaries.uri>
+
+        <linux.amd64.ton.binaries.testnet.uri>
+            https://github.com/neodix42/ton-actions/releases/latest/download/ton-linux-x86-64-testnet.zip
+        </linux.amd64.ton.binaries.testnet.uri>
+        <mac.amd64.ton.binaries.testnet.uri>
+            https://github.com/neodix42/ton-actions/releases/latest/download/ton-mac-x86-64-testnet.zip
+        </mac.amd64.ton.binaries.testnet.uri>
+        <win.amd64.ton.binaries.testnet.uri>
+            https://github.com/neodix42/ton-actions/releases/latest/download/ton-win-x86-64-testnet.zip
+        </win.amd64.ton.binaries.testnet.uri>
+
+        <linux.arm64.ton.binaries.testnet.uri>
+            https://github.com/neodix42/ton-actions/releases/latest/download/ton-linux-arm64-testnet.zip
+        </linux.arm64.ton.binaries.testnet.uri>
+        <mac.arm64.ton.binaries.testnet.uri>
+            https://github.com/neodix42/ton-actions/releases/latest/download/ton-mac-arm64-testnet.zip
+        </mac.arm64.ton.binaries.testnet.uri>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -64,8 +81,18 @@
             <version>3.1.2</version>
         </dependency>
         <dependency>
-            <groupId>io.github.neodix42</groupId>
+            <groupId>org.ton.ton4j</groupId>
             <artifactId>smartcontract</artifactId>
+            <version>${ton4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ton.ton4j</groupId>
+            <artifactId>tlb</artifactId>
+            <version>${ton4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ton.ton4j</groupId>
+            <artifactId>adnl</artifactId>
             <version>${ton4j.version}</version>
         </dependency>
         <dependency>
@@ -99,19 +126,13 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
             <version>${openjfx.version}</version>
-            <classifier>linux</classifier>
+            <classifier>linux${arch}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
             <version>${openjfx.version}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
-            <version>${openjfx.version}</version>
-            <classifier>mac-aarch64</classifier>
+            <classifier>mac${arch}</classifier>
         </dependency>
 
         <dependency>
@@ -124,19 +145,13 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${openjfx.version}</version>
-            <classifier>linux</classifier>
+            <classifier>linux${arch}</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
             <version>${openjfx.version}</version>
-            <classifier>mac</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics</artifactId>
-            <version>${openjfx.version}</version>
-            <classifier>mac-aarch64</classifier>
+            <classifier>mac${arch}</classifier>
         </dependency>
 
         <dependency>
@@ -220,10 +235,25 @@
             <version>${jetty.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>1.0b3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.addjars-maven-plugin</groupId>
+            <artifactId>addjars-maven-plugin</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+
+
         <!-- database -->
         <dependency>
             <groupId>com.objectdb</groupId>
             <artifactId>objectdb</artifactId>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/objectdb-${objectdb.version}.jar</systemPath>
             <version>${objectdb.version}</version>
         </dependency>
         <dependency>
@@ -304,14 +334,14 @@
                         <option>--add-exports</option>
                         <option>javafx.base/com.sun.javafx.scene=com.jfoenix</option>
                     </options>
-                    <mainClass>org.ton.main.App</mainClass>
+                    <mainClass>org.ton.mylocalton.main.App</mainClass>
                 </configuration>
                 <executions>
                     <execution>
                         <!-- Default configuration for running -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>org.ton.main.App</mainClass>
+                            <mainClass>org.ton.mylocalton.main.App</mainClass>
                         </configuration>
                     </execution>
                     <execution>
@@ -321,7 +351,7 @@
                             <options>
                                 <option>-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:8000</option>
                             </options>
-                            <mainClass>org.ton.main.App</mainClass>
+                            <mainClass>org.ton.mylocalton.main.App</mainClass>
                         </configuration>
                     </execution>
                 </executions>
@@ -346,67 +376,35 @@
                             </includes>
                         </fileset>
                         <fileset>
-                            <directory>${basedir}/src/main/resources/org/ton/binaries/</directory>
+                            <directory>${basedir}/src/main/resources/org/ton/mylocalton/binaries/</directory>
                             <includes>
                                 <include>*ton-linux*</include>
                                 <include>*ton-mac*</include>
                                 <include>*ton-win*</include>
                             </includes>
                         </fileset>
-
-
                     </filesets>
-
                 </configuration>
             </plugin>
 
             <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>1.7.1</version>
+                <groupId>com.googlecode.addjars-maven-plugin</groupId>
+                <artifactId>addjars-maven-plugin</artifactId>
+                <version>1.0.5</version>
                 <executions>
                     <execution>
-                        <id>ton-linux-x86_64</id>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>wget</goal>
+                            <goal>add-jars</goal>
                         </goals>
                         <configuration>
-                            <overwrite>true</overwrite>
-                            <skipCache>false</skipCache>
-                            <uri>
-                                ${linux.amd64.ton.binaries.uri}
-                            </uri>
-                            <unpack>true</unpack>
-                            <outputDirectory>${project.build.directory}/binaries-linux-x86_64</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>ton-mac-x86_64</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <overwrite>true</overwrite>
-                            <skipCache>false</skipCache>
-                            <uri>${mac.amd64.ton.binaries.uri}</uri>
-                            <unpack>true</unpack>
-                            <outputDirectory>${project.build.directory}/binaries-mac-x86_64</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>ton-win-x86_64</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <overwrite>true</overwrite>
-                            <skipCache>false</skipCache>
-                            <uri>${win.amd64.ton.binaries.uri}</uri>
-                            <unpack>true</unpack>
-                            <outputDirectory>${project.build.directory}/binaries-windows-x86_64</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>objectdb-2.8.6.jar</include>
+                                    </includes>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
@@ -418,108 +416,102 @@
                 <version>${maven.clean.plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>copy-final-ton-linux-x86_64_to_resources</id>
-                        <phase>process-resources</phase>
+                        <id>download-files</id>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <target>
-                                <copy todir="${basedir}/src/main/resources/org/ton/binaries">
-                                    <fileset
-                                            dir="${project.build.directory}" includes="ton-linux-x86_64.zip"/>
-                                </copy>
-                                <copy file="${project.build.directory}/binaries-linux-x86_64/libtonlibjson.so"
-                                      tofile="${basedir}/src/main/resources/tonlibjson.so"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-final-ton-mac-x86_64_to_resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <copy todir="${basedir}/src/main/resources/org/ton/binaries">
-                                    <fileset
-                                            dir="${project.build.directory}" includes="ton-mac-x86_64.zip"/>
-                                </copy>
-                                <copy file="${project.build.directory}/binaries-mac-x86_64/libtonlibjson.dylib"
-                                      tofile="${basedir}/src/main/resources/libtonlibjson.dylib"/>
-                            </target>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-final-ton-win-x86_64_to_resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <copy todir="${basedir}/src/main/resources/org/ton/binaries">
-                                    <fileset dir="${project.build.directory}" includes="ton-win-x86_64.zip"/>
-                                </copy>
-                                <copy file="${project.build.directory}/binaries-windows-x86_64/tonlibjson.dll"
-                                      tofile="${basedir}/src/main/resources/tonlibjson.dll"/>
+                                <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+                                    <classpath>
+                                        <pathelement location="${project.basedir}/ant-contrib-1.0b3.jar"/>
+                                    </classpath>
+                                </taskdef>
+                                <if>
+                                    <equals arg1="${arch}" arg2=""/>
+                                    <then>
+                                        <if>
+                                            <equals arg1="${ton_branch}" arg2="master"/>
+                                            <then>
+
+                                                <echo>"Building MyLocalTon x86-64 master"</echo>
+                                                <get retries="3" src="${linux.amd64.ton.binaries.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-linux-x86_64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+
+                                                <get retries="3" src="${mac.amd64.ton.binaries.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-mac-x86_64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+
+                                                <get retries="3" src="${win.amd64.ton.binaries.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-win-x86_64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+                                            </then>
+                                            <else>
+                                                <echo>"Building MyLocalTon x86-64 testnet"</echo>
+                                                <get retries="3" src="${linux.amd64.ton.binaries.testnet.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-linux-x86_64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+
+                                                <get retries="3" src="${mac.amd64.ton.binaries.testnet.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-mac-x86_64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+
+                                                <get retries="3" src="${win.amd64.ton.binaries.testnet.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-win-x86_64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+                                            </else>
+                                        </if>
+                                    </then>
+
+                                    <else>
+                                        <if>
+                                            <equals arg1="${ton_branch}" arg2="master"/>
+                                            <then>
+                                                <echo>"Building MyLocalTon arm64 master"</echo>
+                                                <get retries="3" src="${linux.arm64.ton.binaries.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-linux-arm64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+
+                                                <get retries="3" src="${mac.arm64.ton.binaries.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-mac-arm64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+                                            </then>
+                                            <else>
+                                                <echo>"Building MyLocalTon arm64 testnet"</echo>
+                                                <get retries="3" src="${linux.arm64.ton.binaries.testnet.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-linux-arm64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+
+                                                <get retries="3" src="${mac.arm64.ton.binaries.testnet.uri}"
+                                                     dest="${basedir}/src/main/resources/org/ton/mylocalton/binaries/ton-mac-arm64.zip"
+                                                     verbose="false"
+                                                     usetimestamp="true"/>
+                                            </else>
+                                        </if>
+                                    </else>
+                                </if>
                             </target>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>${maven.assembly.plugin.version}</version>
                 <executions>
-
-                    <execution>
-                        <id>create-final-linux-x86_64-binary-package</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>ton-linux-x86_64</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/assembly/linux-x86_64.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>create-final-mac-x86_64-binary-package</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>ton-mac-x86_64</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/assembly/mac-x86_64.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>create-final-win-x86_64-binary-package</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <finalName>ton-win-x86_64</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <descriptors>
-                                <descriptor>src/assembly/win-x86_64.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-
                     <execution>
                         <phase>package</phase>
                         <goals>
@@ -530,7 +522,7 @@
                             <appendAssemblyId>false</appendAssemblyId>
                             <archive>
                                 <manifest>
-                                    <mainClass>org.ton.main.Main</mainClass>
+                                    <mainClass>org.ton.mylocalton.main.Main</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

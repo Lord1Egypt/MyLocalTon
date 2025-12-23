@@ -1,0 +1,39 @@
+name: Test on Ubuntu 22.04 x86-64
+
+on: [ push,workflow_dispatch,workflow_call ]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Build & Test x86-64 mainnet
+        timeout-minutes: 10
+        run: |
+          git fetch -a
+          git checkout main
+          mkdir artifacts                 
+          mvn -q clean compile package -DskipTests
+          cp target/MyLocalTon.jar artifacts/MyLocalTon-x86-64.jar
+          java -jar artifacts/MyLocalTon-x86-64.jar nogui debug test-binaries
+          rm -rf target/myLocalTon
+
+      - name: Build & Test x86-64 testnet
+        timeout-minutes: 10
+        run: |
+          mvn -q clean compile package -DskipTests -Dton_branch=testnet
+          cp target/MyLocalTon.jar artifacts/MyLocalTon-x86-64-testnet.jar
+          java -jar artifacts/MyLocalTon-x86-64-testnet.jar nogui debug test-binaries
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: All-MyLocalTon-Jars
+          path: artifacts

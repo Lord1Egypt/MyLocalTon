@@ -1,0 +1,70 @@
+name: Add to release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Target release'
+        required: true
+        default: 0
+        type: number
+      prefix:
+        description: 'Artifact prefix'
+        required: true
+        default: "dev"
+        type: string
+  workflow_call:
+    inputs:
+      tag:
+        description: 'Target release'
+        required: true
+        default: 0
+        type: number
+      prefix:
+        description: 'Artifact prefix'
+        required: true
+        default: "dev"
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-2019
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 21
+        uses: actions/setup-java@v2
+        with:
+          java-version: '21'
+          distribution: 'adopt'
+
+      - name: Build x86-64 mainnet
+        run: |
+          mkdir artifacts-dev
+          git fetch -a
+          mvn -q clean compile package -DskipTests
+          cp target/MyLocalTon.jar artifacts-dev/MyLocalTon-x86-64-${{ inputs.prefix }}.jar
+
+      - name: Build x86-64 testnet
+        run: |
+          mvn -q clean compile package -DskipTests -Dton_branch=testnet
+          cp target/MyLocalTon.jar artifacts-dev/MyLocalTon-x86-64-testnet-${{ inputs.prefix }}.jar
+
+      - name: Build arm64-aarch64 mainnet
+        run: |
+          mvn -q clean compile package -DskipTests -Darch=-aarch64
+          cp target/MyLocalTon.jar artifacts-dev/MyLocalTon-arm64-${{ inputs.prefix }}.jar
+
+      - name: Build arm64-aarch64 testnet
+        run: |
+          mvn -q clean compile package -DskipTests -Dton_branch=testnet -Darch=-aarch64
+          cp target/MyLocalTon.jar artifacts-dev/MyLocalTon-arm64-testnet-${{ inputs.prefix }}.jar
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: artifacts-dev/*.jar
+          tag: v${{ inputs.tag }}
+          overwrite: true
+          file_glob: true
