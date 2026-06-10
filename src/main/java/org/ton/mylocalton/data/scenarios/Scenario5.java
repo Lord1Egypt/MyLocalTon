@@ -4,12 +4,12 @@ import static org.ton.mylocalton.data.Runner.dataHighloadFaucetAddress;
 
 import java.math.BigInteger;
 import lombok.extern.slf4j.Slf4j;
+import org.ton.mylocalton.data.db.DataDB;
 import org.ton.ton4j.address.Address;
 import org.ton.ton4j.adnl.AdnlLiteClient;
 import org.ton.ton4j.smartcontract.types.WalletV2R2Config;
 import org.ton.ton4j.smartcontract.wallet.v2.WalletV2R2;
 import org.ton.ton4j.utils.Utils;
-import org.ton.mylocalton.data.db.DataDB;
 
 /** to up V2R2 wallet, upload state-init, send back to faucet 0.08 and random address 0.01 */
 @Slf4j
@@ -24,11 +24,11 @@ public class Scenario5 implements Scenario {
   public void run() {
 
     log.info("STARTED SCENARIO 5");
-    WalletV2R2 contract = WalletV2R2.builder().adnlLiteClient(adnlLiteClient).build();
+    WalletV2R2 contract = WalletV2R2.builder().tonProvider(adnlLiteClient).build();
 
     String nonBounceableAddress = contract.getAddress().toNonBounceable();
     DataDB.addDataRequest(nonBounceableAddress, Utils.toNano(0.1));
-    adnlLiteClient.waitForBalanceChange(contract.getAddress(), 60);
+    Utils.sleep(20);
     contract.deploy();
     contract.waitForDeployment();
 
@@ -44,7 +44,7 @@ public class Scenario5 implements Scenario {
             .build();
 
     contract.send(config);
-    contract.waitForBalanceChangeWithTolerance(30, Utils.toNano(0.05));
+    Utils.sleep(6);
 
     BigInteger balance = contract.getBalance();
 

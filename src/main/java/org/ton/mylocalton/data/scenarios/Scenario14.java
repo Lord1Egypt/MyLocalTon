@@ -5,15 +5,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import lombok.extern.slf4j.Slf4j;
+import org.ton.mylocalton.data.utils.MyUtils;
 import org.ton.ton4j.address.Address;
 import org.ton.ton4j.adnl.AdnlLiteClient;
 import org.ton.ton4j.cell.Cell;
+import org.ton.ton4j.smartcontract.SendMode;
 import org.ton.ton4j.smartcontract.multisig.MultiSigWalletV2;
 import org.ton.ton4j.smartcontract.types.*;
 import org.ton.ton4j.smartcontract.utils.MsgUtils;
 import org.ton.ton4j.smartcontract.wallet.v3.WalletV3R2;
 import org.ton.ton4j.utils.Utils;
-import org.ton.mylocalton.data.utils.MyUtils;
 
 /**
  * deploy signer2 wallet, deploy MultiSig V2 with 2 out 3 consensus, deploy order from admin wallet,
@@ -40,14 +41,14 @@ public class Scenario14 implements Scenario {
 
     WalletV3R2 signer3 =
         WalletV3R2.builder()
-            .adnlLiteClient(adnlLiteClient)
+            .tonProvider(adnlLiteClient)
             .keyPair(Utils.generateSignatureKeyPair())
             .walletId(42)
             .build();
 
     MultiSigWalletV2 multiSigWalletV2 =
         MultiSigWalletV2.builder()
-            .adnlLiteClient(adnlLiteClient)
+            .tonProvider(adnlLiteClient)
             .config(
                 MultiSigV2Config.builder()
                     .allowArbitraryOrderSeqno(false)
@@ -71,7 +72,7 @@ public class Scenario14 implements Scenario {
             .destination(multiSigWalletV2.getAddress())
             .amount(Utils.toNano(0.2))
             .stateInit(multiSigWalletV2.getStateInit())
-            .mode(3)
+            .sendMode(SendMode.PAY_GAS_SEPARATELY_AND_IGNORE_ERRORS)
             .build();
     deployer.send(config);
     deployer.waitForDeployment(30);
@@ -105,9 +106,8 @@ public class Scenario14 implements Scenario {
             .build();
 
     deployer.send(config);
-    deployer.waitForBalanceChange();
 
-    Utils.sleep(20);
+    Utils.sleep(10);
 
     Address orderAddress = multiSigWalletV2.getOrderAddress(BigInteger.ZERO);
     log.info("orderAddress {} {}", orderAddress, orderAddress.toRaw());
@@ -128,9 +128,8 @@ public class Scenario14 implements Scenario {
             .body(MultiSigWalletV2.approve(0, 1))
             .build();
     signer2.send(config);
-    signer2.waitForBalanceChange();
 
-    Utils.sleep(20);
+    Utils.sleep(10);
 
     log.info(
         "orderData when twice approved {}", multiSigWalletV2.getOrderData(BigInteger.valueOf(0)));

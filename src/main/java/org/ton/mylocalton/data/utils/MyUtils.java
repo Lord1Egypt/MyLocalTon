@@ -43,11 +43,11 @@ public class MyUtils {
 
   public Contract deploy(AdnlLiteClient adnlLiteClient, BigInteger topUpAmount) {
     long walletId = Math.abs(Utils.getRandomInt());
-    WalletV3R2 contract = WalletV3R2.builder().adnlLiteClient(adnlLiteClient).walletId(walletId).build();
+    WalletV3R2 contract = WalletV3R2.builder().tonProvider(adnlLiteClient).walletId(walletId).build();
 
     String nonBounceableAddress = contract.getAddress().toNonBounceable();
     DataDB.addDataRequest(nonBounceableAddress, topUpAmount);
-    adnlLiteClient.waitForBalanceChange(contract.getAddress(), 60);
+    Utils.sleep(20);
     contract.deploy();
     contract.waitForDeployment();
 

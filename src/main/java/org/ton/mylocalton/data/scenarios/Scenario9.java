@@ -5,9 +5,10 @@ import static org.ton.mylocalton.data.Runner.dataHighloadFaucetAddress;
 import com.iwebpp.crypto.TweetNaclFast;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.ton.mylocalton.data.db.DataDB;
+import org.ton.mylocalton.data.utils.MyUtils;
 import org.ton.ton4j.address.Address;
 import org.ton.ton4j.adnl.AdnlLiteClient;
-import org.ton.ton4j.cell.Cell;
 import org.ton.ton4j.smartcontract.types.DeployedPlugin;
 import org.ton.ton4j.smartcontract.types.NewPlugin;
 import org.ton.ton4j.smartcontract.types.WalletV4R2Config;
@@ -17,8 +18,6 @@ import org.ton.ton4j.smartcontract.wallet.v4.SubscriptionInfo;
 import org.ton.ton4j.smartcontract.wallet.v4.WalletV4R2;
 import org.ton.ton4j.tlb.Message;
 import org.ton.ton4j.utils.Utils;
-import org.ton.mylocalton.data.db.DataDB;
-import org.ton.mylocalton.data.utils.MyUtils;
 
 /**
  * creates beneficiary wallet used in plugin, tops up V4R2 wallet, upload state-init with random
@@ -43,7 +42,7 @@ public class Scenario9 implements Scenario {
 
     WalletV4R2 contract =
         WalletV4R2.builder()
-            .adnlLiteClient(adnlLiteClient)
+            .tonProvider(adnlLiteClient)
             .keyPair(keyPair)
             .walletId(walletId)
             .build();
@@ -53,10 +52,9 @@ public class Scenario9 implements Scenario {
     String nonBounceableAddress = walletAddress.toNonBounceable();
 
     DataDB.addDataRequest(nonBounceableAddress, Utils.toNano(1));
-    adnlLiteClient.waitForBalanceChange(contract.getAddress(), 60);
+    Utils.sleep(15);
 
     contract.deploy();
-
     contract.waitForDeployment();
 
     long walletCurrentSeqno = contract.getSeqno();
@@ -93,8 +91,6 @@ public class Scenario9 implements Scenario {
             .build();
 
     contract.send(config);
-
-    contract.waitForBalanceChangeWithTolerance(60, Utils.toNano(0.1));
 
     Utils.sleep(10);
 

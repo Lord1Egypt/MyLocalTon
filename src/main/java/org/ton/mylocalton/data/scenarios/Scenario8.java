@@ -7,8 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.ton.mylocalton.data.db.DataDB;
 import org.ton.ton4j.address.Address;
 import org.ton.ton4j.adnl.AdnlLiteClient;
+import org.ton.ton4j.provider.SendResponse;
 import org.ton.ton4j.smartcontract.SendMode;
-import org.ton.ton4j.smartcontract.SendResponse;
 import org.ton.ton4j.smartcontract.types.WalletV4R2Config;
 import org.ton.ton4j.smartcontract.wallet.v4.WalletV4R2;
 import org.ton.ton4j.utils.Utils;
@@ -31,7 +31,7 @@ public class Scenario8 implements Scenario {
 
     WalletV4R2 contract =
         WalletV4R2.builder()
-            .adnlLiteClient(adnlLiteClient)
+            .tonProvider(adnlLiteClient)
             .keyPair(keyPair)
             .walletId(walletId)
             .build();
@@ -40,7 +40,7 @@ public class Scenario8 implements Scenario {
 
     String nonBounceableAddress = walletAddress.toNonBounceable();
     DataDB.addDataRequest(nonBounceableAddress, Utils.toNano(0.1));
-    adnlLiteClient.waitForBalanceChange(contract.getAddress(), 60);
+    Utils.sleep(20);
     SendResponse sendResponse = contract.deploy();
     log.info("deploy8 {}", sendResponse);
     contract.waitForDeployment();
@@ -64,7 +64,6 @@ public class Scenario8 implements Scenario {
             .build();
 
     contract.send(config);
-    contract.waitForBalanceChangeWithTolerance(60, Utils.toNano(0.05));
 
     log.info("FINISHED SCENARIO 8");
   }
