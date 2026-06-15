@@ -395,6 +395,11 @@ GR$100 1 500 config.complaint_prices!
 // 17 add-validator
 // newkeypair nip dup ."Validator #2 public key = " Bx. cr
 // 239 add-validator
+
+SIMPLEX_TARGET_RATE_MS SIMPLEX_SLOTS_PER_LEADER_WINDOW SIMPLEX_FIRST_BLOCK_TIMEOUT_MS SIMPLEX_MAX_LEADER_WINDOW_DESYNC make-simplex-params // masterchain
+SIMPLEX_TARGET_RATE_MS SIMPLEX_SLOTS_PER_LEADER_WINDOW SIMPLEX_FIRST_BLOCK_TIMEOUT_MS SIMPLEX_MAX_LEADER_WINDOW_DESYNC make-simplex-params // basechain
+config.new_consensus_params_all!
+
 ORIGINAL_VSET_VALID_FOR =: orig_vset_valid_for  // original validator set valid 2000 seconds
 now dup orig_vset_valid_for + 0 config.validators!
 
@@ -439,4 +444,3 @@ basestate0_rhash ."Basestate0 root hash= " dup X. space 256 u>B B>base64url type
 basestate0_fhash ."Basestate0 file hash= " dup X. space 256 u>B B>base64url type cr
 zerostate_rhash ."Zerostate root hash= " dup X. space 256 u>B B>base64url type cr
 zerostate_fhash ."Zerostate file hash= " dup X. space 256 u>B B>base64url type cr
-

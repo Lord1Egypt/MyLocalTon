@@ -10,15 +10,15 @@ import java.nio.channels.FileLock;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.scene.Scene;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.ton.mylocalton.actions.MyLocalTon;
 import org.ton.mylocalton.settings.MyLocalTonSettings;
 import org.ton.mylocalton.utils.MyLocalTonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
 public class Main {
 
   public static final AtomicBoolean appActive = new AtomicBoolean(true);
@@ -26,16 +26,18 @@ public class Main {
   public static final File file = new File(MyLocalTonSettings.LOCK_FILE);
   public static RandomAccessFile randomAccessFile;
   public static FileLock fileLock;
+  private static Logger log;
 
   public static void main(String[] args) throws Throwable {
 
     for (String arg : args) {
       if (arg.equalsIgnoreCase("version")) {
-        System.out.println("v1.42");
+        System.out.println("v1.43");
         System.exit(0);
       }
     }
 
+    log = LoggerFactory.getLogger(Main.class);
     log.debug("myLocalTon lock file location: {}", MyLocalTonSettings.LOCK_FILE);
 
     if (Arrays.asList(args).contains("restart")) {

@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SystemUtils;
 import org.ton.ton4j.smartcontract.types.WalletVersion;
 import org.ton.ton4j.utils.Utils;
@@ -21,7 +20,6 @@ import org.ton.mylocalton.parameters.ValidationParam;
 @Getter
 @Setter
 @ToString
-@Slf4j
 public class MyLocalTonSettings implements Serializable {
 
   public static final String LOCK_FILE =
@@ -257,6 +255,10 @@ public class MyLocalTonSettings implements Serializable {
     Long electionStartBefore = 25 * 60L; // 2 min, 50 min
     Long electionEndBefore = 10 * 60L; // 1 min, 10 min
     Long electionStakesFrozenFor = 5 * 60L; // 30 sec, 20 min
+    Long simplexTargetRateMs = 300L;
+    Long simplexSlotsPerLeaderWindow = 4L;
+    Long simplexFirstBlockTimeoutMs = 400L;
+    Long simplexMaxLeaderWindowDesync = 700L;
 
     //        Long electedFor = 3 * 60L; // 3 min
     //        Long electionStartBefore = 2 * 60L; // 2 min

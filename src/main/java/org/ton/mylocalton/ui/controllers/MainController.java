@@ -718,7 +718,7 @@ public class MainController implements Initializable {
       validatorLogDir5,
       validatorLogDir6,
       validatorLogDir7,
-      coinsPerWallet,
+      nanogramsPerWallet,
       globalId,
       initialBalance,
       maxValidators,
@@ -730,6 +730,10 @@ public class MainController implements Initializable {
       minTotalStake,
       stakesFrozenFor,
       maxFactor,
+      simplexTargetRateMs,
+      simplexSlotsPerLeaderWindow,
+      simplexFirstBlockTimeoutMs,
+      simplexMaxLeaderWindowDesync,
       gasPrice,
       gasPriceMc,
       cellPrice,
@@ -746,7 +750,7 @@ public class MainController implements Initializable {
         new FXMLLoader(
             App.class
                 .getClassLoader()
-                .getResource("org/ton/mylocalton/ui/custom/layout/send-coin-pane.fxml"));
+                .getResource("org/ton/mylocalton/ui/custom/layout/send-grams-pane.fxml"));
     Parent parent = null;
     try {
       parent = loader.load();
@@ -754,7 +758,7 @@ public class MainController implements Initializable {
       log.error(e.getMessage(), e);
       throw new RuntimeException(e);
     }
-    SendCoinPaneController controller = loader.getController();
+    SendGramsPaneController controller = loader.getController();
     controller.setHiddenWalletAddr(srcAddr);
 
     JFXDialogLayout content = new JFXDialogLayout();
@@ -1199,7 +1203,7 @@ public class MainController implements Initializable {
 
     listenFor(CustomActionEvent.class, this::handle);
     listenFor(CustomSearchEvent.class, this::handle);
-    coinsPerWallet.getTextField().setOnKeyTyped(onlyDigits);
+    nanogramsPerWallet.getTextField().setOnKeyTyped(onlyDigits);
 
     configNodePublicPort1.setOnKeyTyped(onlyDigits);
     configNodeConsolePort1.setOnKeyTyped(onlyDigits);
@@ -1296,6 +1300,10 @@ public class MainController implements Initializable {
     maxStake.setOnKeyTyped(onlyDigits);
     minTotalStake.setOnKeyTyped(onlyDigits);
     maxFactor.setOnKeyTyped(onlyDigits);
+    simplexTargetRateMs.setOnKeyTyped(onlyDigits);
+    simplexSlotsPerLeaderWindow.setOnKeyTyped(onlyDigits);
+    simplexFirstBlockTimeoutMs.setOnKeyTyped(onlyDigits);
+    simplexMaxLeaderWindowDesync.setOnKeyTyped(onlyDigits);
     electionEndBefore.setOnKeyTyped(onlyDigits);
 
     mainLayout
@@ -1363,7 +1371,7 @@ public class MainController implements Initializable {
     showMsgBodyCheckBox.setSelected(settings.getUiSettings().isShowBodyInMessage());
     shardStateCheckbox.setSelected(settings.getUiSettings().isShowShardStateInBlockDump());
 
-    coinsPerWallet.setFieldText(settings.getWalletSettings().getInitialAmount().toString());
+    nanogramsPerWallet.setFieldText(settings.getWalletSettings().getInitialAmount().toString());
 
     validatorLogDir1.setFieldText(settings.getGenesisNode().getTonLogDir());
     myLocalTonLog.setFieldText(MyLocalTonSettings.LOG_FILE);
@@ -1401,6 +1409,14 @@ public class MainController implements Initializable {
     minTotalStake.setFieldText(
         settings.getBlockchainSettings().getMinTotalValidatorStake().toString());
     maxFactor.setFieldText(settings.getBlockchainSettings().getMaxFactor().toString());
+    simplexTargetRateMs.setFieldText(
+        settings.getBlockchainSettings().getSimplexTargetRateMs().toString());
+    simplexSlotsPerLeaderWindow.setFieldText(
+        settings.getBlockchainSettings().getSimplexSlotsPerLeaderWindow().toString());
+    simplexFirstBlockTimeoutMs.setFieldText(
+        settings.getBlockchainSettings().getSimplexFirstBlockTimeoutMs().toString());
+    simplexMaxLeaderWindowDesync.setFieldText(
+        settings.getBlockchainSettings().getSimplexMaxLeaderWindowDesync().toString());
 
     nodeBlockTtl1.setText(settings.getGenesisNode().getValidatorBlockTtl().toString());
     nodeArchiveTtl1.setText(settings.getGenesisNode().getValidatorArchiveTtl().toString());
@@ -1745,7 +1761,9 @@ public class MainController implements Initializable {
     settings.getUiSettings().setEnableTonHttpApi(enableTonHttpApi.isSelected());
     settings.getUiSettings().setShowShardStateInBlockDump(shardStateCheckbox.isSelected());
 
-    settings.getWalletSettings().setInitialAmount(new BigInteger(coinsPerWallet.getFieldText()));
+    settings
+        .getWalletSettings()
+        .setInitialAmount(new BigInteger(nanogramsPerWallet.getFieldText()));
 
     settings.getBlockchainSettings().setMinValidators(Long.valueOf(minValidators.getFieldText()));
     settings.getBlockchainSettings().setMaxValidators(Long.valueOf(maxValidators.getFieldText()));
@@ -1777,6 +1795,18 @@ public class MainController implements Initializable {
         .getBlockchainSettings()
         .setMinTotalValidatorStake(Long.valueOf(minTotalStake.getFieldText()));
     settings.getBlockchainSettings().setMaxFactor(new BigDecimal(maxFactor.getFieldText()));
+    settings
+        .getBlockchainSettings()
+        .setSimplexTargetRateMs(Long.valueOf(simplexTargetRateMs.getFieldText()));
+    settings
+        .getBlockchainSettings()
+        .setSimplexSlotsPerLeaderWindow(Long.valueOf(simplexSlotsPerLeaderWindow.getFieldText()));
+    settings
+        .getBlockchainSettings()
+        .setSimplexFirstBlockTimeoutMs(Long.valueOf(simplexFirstBlockTimeoutMs.getFieldText()));
+    settings
+        .getBlockchainSettings()
+        .setSimplexMaxLeaderWindowDesync(Long.valueOf(simplexMaxLeaderWindowDesync.getFieldText()));
 
     settings.getGenesisNode().setValidatorBlockTtl(Long.valueOf(nodeBlockTtl1.getText()));
     settings.getGenesisNode().setValidatorArchiveTtl(Long.valueOf(nodeArchiveTtl1.getText()));
